@@ -3,8 +3,8 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-# Load model
-model = tf.keras.models.load_model("cnn_model.keras")
+from tensorflow import keras
+model = keras.models.load_model("cnn_model.keras")
 
 classes = ["airplane","automobile","bird","cat","deer",
            "dog","frog","horse","ship","truck"]
