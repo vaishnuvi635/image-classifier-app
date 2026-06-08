@@ -1,16 +1,29 @@
-import streamlit as st
+import gradio as gr
 import numpy as np
+from tensorflow import keras
 from PIL import Image
 
-st.title("🧠 CNN Image Classifier")
-st.write("Upload image to test model")
+# load model
+model = keras.models.load_model("cnn_model.keras")
 
-file = st.file_uploader("Upload Image", type=["jpg","png","jpeg"])
+classes = ["airplane","automobile","bird","cat","deer",
+           "dog","frog","horse","ship","truck"]
 
-if file:
-    image = Image.open(file)
-    st.image(image, caption="Uploaded Image", width=250)
+def predict(img):
+    img = img.convert("RGB")
+    img = img.resize((32, 32))
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
 
-    st.info("⚠ Model loading skipped for deployment stability demo")
+    pred = model.predict(img)
+    return classes[np.argmax(pred)]
 
-    st.success("App is working! (Fix model in backend later)")
+demo = gr.Interface(
+    fn=predict,
+    inputs=gr.Image(type="pil"),
+    outputs="text",
+    title="CNN Image Classifier",
+    description="Upload an image and get prediction"
+)
+
+demo.launch()
